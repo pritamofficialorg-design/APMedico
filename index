@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinical Tele-Diagnostic Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #0b1329;
+      --bg-panel: #131f37;
+      --bg-card: #182848;
+      --border: #263859;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --accent: #ec4899;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f1f5f9;
+      --bg-panel: #ffffff;
+      --bg-card: #f8fafc;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Header */
+    .header {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Layout & Sidebar */
+    .app-layout {
+      display: flex;
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-item {
+      padding: 10px 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--primary);
+      border-left: 3px solid var(--primary);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Cards & Grids */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .stat-val {
+      font-size: 24px;
+      font-weight: 800;
+      margin-top: 6px;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    .data-table th, .data-table td {
+      padding: 12px;
+      text-align: left;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table th {
+      background: rgba(0, 0, 0, 0.15);
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    /* Buttons & Inputs */
+    .btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .btn:hover { background: rgba(255, 255, 255, 0.08); }
+    .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="brand-title">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C9.5 7 5 11 5 16a7 7 0 0 0 14 0c0-5-4.5-9-7-14z"/></svg>
+      Tele-Diagnostic Suite
+    </div>
+    <div class="header-actions">
+      <button class="btn" onclick="toggleTheme()">🌓 Mode</button>
+      <button class="btn btn-primary" onclick="alert('Session signed out.')">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="nav-item active" onclick="setTab(this, 'all')">⚡ All Modalities</div>
+      <div class="nav-item" onclick="setTab(this, 'eeg')">🧠 EEG Studies</div>
+      <div class="nav-item" onclick="setTab(this, 'pft')">🫁 PFT Spirometry</div>
+    </aside>
+
+    <main class="main-content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Urgent Studies</div>
+          <div class="stat-val" style="color: var(--warning);">2 Cases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Emergency</div>
+          <div class="stat-val" style="color: var(--danger);">0 Cases</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Completed Today</div>
+          <div class="stat-val" style="color: var(--success);">14 Studies</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size: 15px; margin-bottom: 8px;">Active Case Queue</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Case ID</th>
+              <th>Patient</th>
+              <th>Modality</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="caseQueueBody">
+            <tr>
+              <td><strong>#AP-8921</strong></td>
+              <td>John Doe (45y)</td>
+              <td>EEG</td>
+              <td><span style="color: var(--warning); font-weight: 700;">Urgent</span></td>
+              <td><span class="badge badge-warning">In Queue</span></td>
+              <td><button class="btn" style="padding: 4px 8px;" onclick="openCase('AP-8921')">Open Case</button></td>
+            </tr>
+            <tr>
+              <td><strong>#AP-8922</strong></td>
+              <td>Jane Smith (32y)</td>
+              <td>PFT</td>
+              <td>Routine</td>
+              <td><span class="badge badge-success">Completed</span></td>
+              <td><button class="btn" style="padding: 4px 8px;" onclick="openCase('AP-8922')">View PDF</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', next);
+    }
+
+    function setTab(element, filter) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    function openCase(id) {
+      alert(`Accessing case file: ${id}`);
+    }
+  </script>
+</body>
+</html>
