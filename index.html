@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta name="referrer" content="same-origin">
+  <title>AP DIAGNOSIS MEDICO SOLUTIONS — Clinical Diagnostic Suite V200</title>
+  <!-- AP MEDICO V150 RECOVERY: original Supabase project/auth/data/billing wiring preserved. Login transport hardened without changing stored data. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #0b1329;
+      --bg-panel: #131f37;
+      --bg-card: #182848;
+      --border: #263859;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --accent: #ec4899;
+      --teal: #0d9488;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --font-scale: 14px;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f1f5f9;
+      --bg-panel: #ffffff;
+      --bg-card: #f8fafc;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+    }
+
+    [data-theme="contrast"] {
+      --bg-body: #000000;
+      --bg-panel: #0a0a0a;
+      --bg-card: #141414;
+      --border: #333333;
+      --text: #ffffff;
+      --text-muted: #999999;
+      --primary: #00e5ff;
+      --primary-hover: #00b4d8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text);
+      font-size: var(--font-scale);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #1e1b4b 0%, #060814 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: rgba(19, 31, 55, 0.95);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 420px;
+      padding: 38px 30px;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      color: var(--text);
+      backdrop-filter: blur(8px);
+    }
+
+    .lotus-bloom-box {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 14px auto;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lotus-glow-core {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background: radial-gradient(circle, #fde047 15%, #ec4899 75%, transparent 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 20px #ec4899;
+      animation: corePulse 3s ease-in-out infinite alternate;
+      z-index: 5;
+    }
+
+    .petal {
+      position: absolute;
+      width: 22px;
+      height: 48px;
+      background: linear-gradient(to top, rgba(236, 72, 153, 0.9), rgba(244, 114, 182, 0.35));
+      border-radius: 50% 50% 50% 50% / 80% 80% 20% 20%;
+      transform-origin: bottom center;
+      bottom: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .petal.p1 { animation: bloom1 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+    .petal.p2 { animation: bloom2 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+    .petal.p3 { animation: bloom3 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+    .petal.p4 { animation: bloom4 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+    .petal.p5 { animation: bloom5 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+    .petal.p6 { animation: bloom6 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+    .petal.p7 { animation: bloom7 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate; }
+
+    @keyframes corePulse {
+      0% { transform: scale(0.85); opacity: 0.6; }
+      100% { transform: scale(1.25); opacity: 1; }
+    }
+
+    @keyframes bloom1 { 0% { transform: rotate(0deg) scaleY(0.7); } 100% { transform: rotate(-60deg) scaleY(1.05); } }
+    @keyframes bloom2 { 0% { transform: rotate(0deg) scaleY(0.7); } 100% { transform: rotate(-40deg) scaleY(1.08); } }
+    @keyframes bloom3 { 0% { transform: rotate(0deg) scaleY(0.7); } 100% { transform: rotate(-20deg) scaleY(1.12); } }
+    @keyframes bloom4 { 0% { transform: rotate(0deg) scaleY(0.7); } 100% { transform: rotate(0deg) scaleY(1.18); } }
+    @keyframes bloom5 { 0% { transform: rotate(0deg) scaleY(0.7); } 100% { transform: rotate(20deg) scaleY(1.12); } }
+    @keyframes bloom6 { 0% { transform: rotate(0deg) scaleY(0.7); } 100% { transform: rotate(40deg) scaleY(1.08); } }
+    @keyframes bloom7 { 0% { transform: rotate(0deg) scaleY(0.7); } 100% { transform: rotate(60deg) scaleY(1.05); } }
+
+    .auth-title { font-size: 24px; font-weight: 800; letter-spacing: 0.5px; }
+    .auth-subtitle { font-size: 13px; color: var(--text-muted); margin: 4px 0 22px; }
+
+    .form-group { text-align: left; margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      background: var(--bg-card);
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .form-control:focus { border-color: var(--accent); }
+
+    .btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-submit {
+      background: linear-gradient(135deg, #ec4899, #be185d);
+      color: #fff;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .btn-submit:hover { opacity: 0.95; transform: translateY(-1px); }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-warning { background: var(--warning); color: #000; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); }
+
+    .app-layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 260px;
+      background: #090f20;
+      border-right: 1px solid var(--border);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-brand {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-title { font-size: 17px; font-weight: 800; letter-spacing: 0.5px; color: #fff; }
+    .sidebar-nav { list-style: none; padding: 15px 0; flex: 1; }
+    .sidebar-heading {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      padding: 12px 20px 4px;
+      font-weight: 700;
+    }
+    .sidebar-item {
+      padding: 11px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      border-left: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .sidebar-item:hover, .sidebar-item.active {
+      background: rgba(255,255,255,0.03);
+      border-left-color: var(--accent);
+      color: #fff;
+    }
+    .sidebar-heading { border-bottom: 1px solid rgba(148,163,184,.18); margin: 6px 12px 2px; padding: 12px 8px 8px; font-weight: 800; }
+    .sidebar-item { font-weight: 700; letter-spacing: .1px; }
+    .page-nav-label { font-weight: 900; }
+    .page-nav-divider { background: rgba(148,163,184,.2); }
+
+    /* ===== ADMIN MULTI-PAGE WORKSPACE ===== */
+    .app-page-hidden { display: none !important; }
+    .app-page-visible { display: block !important; animation: appPageIn .22s ease both; }
+    @keyframes appPageIn { from { opacity: .35; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .page-nav-divider { height:1px; background:rgba(255,255,255,.07); margin:10px 16px; }
+    .page-nav-label { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:#64748b; padding:8px 20px 4px; font-weight:800; }
+    @media (max-width: 900px){ .sidebar{width:220px;} .sidebar-item{padding:10px 14px;font-size:12px;} }
+
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; height: 100vh; min-height: 0; }
+    .sidebar { position: sticky; top: 0; height: 100vh; max-height: 100vh; overflow-y: auto; z-index: 30; }
+    .content-area { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+    .worklist-toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end; padding:12px; margin:0 0 12px; border:1px solid var(--border); border-radius:12px; background:var(--bg-card); }
+    .worklist-toolbar .filter-field { min-width:190px; flex:1; }
+    .worklist-toolbar label { display:block; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:5px; }
+    .worklist-toolbar input { width:100%; }
+    .message-centre-card { border:1px solid rgba(245,158,11,.28); background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(59,130,246,.06)); }
+    .message-unread-badge { display:inline-flex; min-width:18px; height:18px; padding:0 5px; border-radius:999px; align-items:center; justify-content:center; background:#ef4444; color:#fff; font-size:9px; font-weight:900; margin-left:5px; }
+    .message-list { display:flex; flex-direction:column; gap:8px; }
+    .message-item { padding:11px 12px; border:1px solid var(--border); border-radius:11px; background:var(--bg-card); }
+    .message-item.unread { border-color:rgba(245,158,11,.45); box-shadow:0 6px 20px rgba(245,158,11,.08); }
+    .message-item-head { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .message-item-title { font-weight:900; font-size:12px; }
+    .message-item-meta { font-size:9px; color:var(--text-muted); margin-top:3px; }
+    .message-item-body { font-size:11px; line-height:1.5; margin-top:7px; white-space:pre-wrap; }
+    .urgent-message-btn { border-color:rgba(239,68,68,.45)!important; color:#ef4444!important; }
+    @media(max-width:900px){ .main-wrapper{height:100vh;} .content-area{padding:14px;gap:14px;} .worklist-toolbar .filter-field{min-width:150px;} }
+    /* Hospital workspace: compact 80% viewing scale for easier desktop viewing */
+    body.role-hospital .main-wrapper { zoom: 0.8; width: 125%; }
+    @supports not (zoom: 0.8) {
+      body.role-hospital .main-wrapper { transform: scale(0.8); transform-origin: top left; width: 125%; }
+    }
+    .broadcast-banner {
+      background: linear-gradient(90deg, #831843, #1e1b4b);
+      border-bottom: 1px solid var(--border);
+      color: #fce7f3;
+      padding: 7px 24px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+    .broadcast-pill {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+    .marquee-text { white-space: nowrap; animation: scrollBanner 90s linear infinite; }
+    @keyframes scrollBanner { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+    .top-header {
+      height: 64px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+    .clock-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--bg-card);
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-session {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(2, 132, 199, 0.15);
+      color: var(--primary);
+    }
+    .menu-btn-hamburger {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .hamburger-line { width: 18px; height: 2px; background: var(--text); border-radius: 2px; }
+
+    .ip-linker-ribbon {
+      background: #060b18;
+      color: #e2e8f0;
+      padding: 7px 24px;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .content-area { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+    .metric-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .professional-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+    .professional-metrics .stat-card { min-height: 82px; padding: 13px 15px; border-top-width: 3px; border-radius: 12px; box-shadow: 0 8px 24px rgba(15,23,42,.07); }
+    .professional-metrics .stat-title { font-size: 11px; font-weight: 800; letter-spacing: .35px; text-transform: uppercase; margin-bottom: 6px; }
+    .professional-metrics .stat-count { font-size: 20px; line-height: 1.15; }
+    .card-total { border-top-color: #7c3aed; }
+    .card-total .stat-count { color: #7c3aed; }
+    @media (max-width: 720px) {
+      .professional-metrics { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 3px; scrollbar-width: thin; }
+      .professional-metrics .stat-card { flex: 0 0 170px; }
+    }
+    .stat-card {
+      background: var(--bg-panel);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-urgent { border-top-color: var(--warning); }
+    .card-emergency { border-top-color: var(--danger); }
+    .card-today { border-top-color: var(--primary); }
+    .card-month { border-top-color: var(--teal); }
+    .card-year { border-top-color: var(--accent); }
+    .stat-title { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+    .stat-count { font-size: 22px; font-weight: 800; color: var(--text); }
+    .card-urgent .stat-count { color: var(--warning); }
+    .card-emergency .stat-count { color: var(--danger); }
+
+    .grid-forms { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .card { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+    .card-header {
+      font-size: 15px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .data-table th, .data-table td {
+      padding: 11px 12px;
+      text-align: left;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table th {
+      background: rgba(0, 0, 0, 0.15);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-status { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .status-ready { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .status-queue { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+
+    body.role-hospital .admin-only { display: none !important; }
+    body.role-admin .hospital-only { display: none !important; }
+    body.role-admin .hospital-intake-only { display: none !important; }
+body.role-doctor .admin-only, body.role-doctor .hospital-only, body.role-doctor .hospital-intake-only { display: none !important; }
+body.role-doctor .doctor-only { display: block !important; }
+.doctor-only { display:none; }
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+      z-index: 2500;
+      display: none;
+    }
+    .customization-drawer {
+      position: fixed;
+      top: 0;
+      right: -360px;
+      width: 340px;
+      height: 100vh;
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      z-index: 2600;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .customization-drawer.open { right: 0; }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2700;
+      padding: 16px;
+    }
+    .modal-window {
+      background: var(--bg-panel);
+      width: 100%;
+      max-width: 500px;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+  
+/* ================= 60-THEME + VISUAL UX ENHANCEMENT PACK ================= */
+:root{
+  --ux-glow: rgba(2,132,199,.28);
+  --ux-glass: rgba(255,255,255,.055);
+  --ux-radius: 16px;
+  --ux-shadow: 0 18px 55px rgba(0,0,0,.28);
+}
+body.ux-glass .card, body.ux-glass .stat-card, body.ux-glass .auth-card, body.ux-glass .modal-window, body.ux-glass .customization-drawer{
+  background: linear-gradient(135deg,var(--ux-glass),rgba(255,255,255,.02));
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  box-shadow: var(--ux-shadow); border-color: color-mix(in srgb,var(--primary) 28%,var(--border));
+}
+body.ux-neon .card, body.ux-neon .stat-card{box-shadow:0 0 0 1px color-mix(in srgb,var(--primary) 18%,transparent),0 0 28px var(--ux-glow)}
+body.ux-soft .card, body.ux-soft .stat-card{border-radius:22px;box-shadow:0 12px 35px rgba(0,0,0,.16)}
+body.ux-compact .card{padding:12px}.ux-compact .content-area{gap:10px}
+body.ux-focus .sidebar{transform:translateX(-270px);opacity:.15;pointer-events:none}body.ux-focus .main-wrapper{margin-left:0}
+.ux-top-status{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;padding:8px 12px;border:1px solid var(--border);border-radius:12px;background:var(--ux-glass);font-size:11px;color:var(--text-muted)}
+.ux-dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 12px var(--success);animation:uxPulse 1.8s infinite}.ux-dot.warn{background:var(--warning);box-shadow:0 0 12px var(--warning)}
+@keyframes uxPulse{0%,100%{transform:scale(.8);opacity:.65}50%{transform:scale(1.2);opacity:1}}
+.ux-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);background:var(--bg-card);color:var(--text);font-size:10px;font-weight:700}
+.ux-action-row{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}.ux-action-row .btn{border-radius:10px}
+.ux-floating{position:fixed;right:18px;bottom:18px;z-index:1500;display:flex;flex-direction:column;gap:8px}.ux-fab{width:46px;height:46px;border-radius:50%;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);box-shadow:0 12px 30px rgba(0,0,0,.35);cursor:pointer;font-size:18px}
+.ux-fab:hover{transform:translateY(-2px);border-color:var(--primary)}
+.ux-toast-stack{position:fixed;right:18px;top:78px;z-index:3000;display:flex;flex-direction:column;gap:8px;max-width:min(360px,calc(100vw - 36px))}
+.ux-toast{padding:11px 13px;border:1px solid var(--border);background:var(--bg-panel);border-left:4px solid var(--primary);border-radius:12px;box-shadow:var(--ux-shadow);animation:uxIn .25s ease;color:var(--text);font-size:12px}.ux-toast.success{border-left-color:var(--success)}.ux-toast.warning{border-left-color:var(--warning)}.ux-toast.danger{border-left-color:var(--danger)}
+@keyframes uxIn{from{opacity:0;transform:translateX(15px)}to{opacity:1;transform:none}}
+.ux-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:2800}.ux-modal.open{display:flex}.ux-panel{width:min(980px,96vw);max-height:88vh;overflow:auto;background:var(--bg-panel);border:1px solid var(--border);border-radius:22px;box-shadow:0 30px 100px rgba(0,0,0,.55);padding:20px}
+.ux-modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;background:var(--bg-panel);padding-bottom:12px;z-index:2}.ux-modal-title{font-size:18px;font-weight:800}.ux-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+.ux-theme-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.ux-theme-toolbar input{flex:1;min-width:180px}.ux-theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.ux-theme-card{position:relative;padding:11px;border:1px solid var(--border);border-radius:15px;background:var(--bg-card);cursor:pointer;transition:.2s;overflow:hidden}.ux-theme-card:hover{transform:translateY(-3px);border-color:var(--primary);box-shadow:0 10px 25px rgba(0,0,0,.18)}.ux-theme-card.active{outline:2px solid var(--primary)}.ux-theme-swatches{display:flex;height:30px;border-radius:9px;overflow:hidden;margin-bottom:8px}.ux-theme-swatches span{flex:1}.ux-theme-name{font-weight:800;font-size:11px}.ux-theme-no{font-size:9px;color:var(--text-muted)}.ux-star{position:absolute;right:8px;top:8px;border:0;background:transparent;color:var(--warning);cursor:pointer;font-size:14px}
+.ux-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ux-setting{padding:12px;border:1px solid var(--border);border-radius:13px;background:var(--bg-card)}.ux-setting label{font-size:10px;color:var(--text-muted);font-weight:800;text-transform:uppercase;display:block;margin-bottom:6px}.ux-setting select,.ux-setting input{width:100%}
+.ux-kbd{font-family:'JetBrains Mono',monospace;border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 5px;background:var(--bg-body);font-size:9px}
+.ux-progress{height:6px;border-radius:999px;background:var(--bg-card);overflow:hidden}.ux-progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--accent));transition:width .7s ease}
+.ux-empty{padding:28px;text-align:center;color:var(--text-muted);border:1px dashed var(--border);border-radius:14px}
+@media(max-width:800px){.ux-settings-grid{grid-template-columns:1fr}.ux-theme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ux-top-status{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+
+    /* ================= NEXT-LEVEL WEATHER + LOGIN EXPERIENCE ================= */
+.auth-overlay.login-cinematic::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,rgba(56,189,248,.18),transparent 30%),radial-gradient(circle at 20% 80%,rgba(236,72,153,.12),transparent 28%);animation:loginAura 5s ease-in-out infinite alternate;pointer-events:none}
+.auth-card{position:relative;z-index:2;animation:loginCardIn .9s cubic-bezier(.16,1,.3,1) both;overflow:hidden}
+.auth-card::before{content:"";position:absolute;inset:-2px;border-radius:26px;padding:1px;background:conic-gradient(from 0deg,transparent,var(--primary),#ec4899,#22d3ee,transparent 70%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:loginRing 5s linear infinite;pointer-events:none;opacity:.7}
+.auth-card::after{content:"SECURE CLINICAL NETWORK";position:absolute;left:0;right:0;bottom:9px;font:700 8px 'JetBrains Mono',monospace;letter-spacing:3px;color:rgba(148,163,184,.35);pointer-events:none}
+@keyframes loginCardIn{from{opacity:0;transform:translateY(28px) scale(.94);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+@keyframes loginAura{from{transform:scale(1);opacity:.65}to{transform:scale(1.08);opacity:1}}
+@keyframes loginRing{to{transform:rotate(360deg)}}
+.login-progress{height:3px;border-radius:99px;background:rgba(148,163,184,.14);overflow:hidden;margin:18px 0 2px;position:relative;z-index:3}.login-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#8b5cf6,#ec4899);box-shadow:0 0 14px rgba(34,211,238,.8);animation:loginProgress 5s linear forwards}@keyframes loginProgress{to{width:100%}}
+.portal-transition{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at center,#0b2440 0%,#050914 58%,#02040a 100%);overflow:hidden}.portal-transition.open{display:flex}.portal-transition .pt-grid{position:absolute;inset:-50%;background:linear-gradient(rgba(56,189,248,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.07) 1px,transparent 1px);background-size:42px 42px;transform:perspective(500px) rotateX(60deg);animation:ptGrid 2.5s linear infinite}.portal-transition .pt-core{width:150px;height:150px;border-radius:50%;border:1px solid rgba(56,189,248,.45);box-shadow:0 0 30px rgba(56,189,248,.25),inset 0 0 35px rgba(139,92,246,.25);display:flex;align-items:center;justify-content:center;position:relative;animation:ptPulse 1.3s ease-in-out infinite}.portal-transition .pt-core::before,.portal-transition .pt-core::after{content:"";position:absolute;border:1px solid rgba(236,72,153,.5);border-radius:50%;inset:-22px;animation:ptOrbit 2s linear infinite}.portal-transition .pt-core::after{inset:-42px;border-color:rgba(34,211,238,.28);animation-duration:3.5s;animation-direction:reverse}.pt-logo{font-size:42px;filter:drop-shadow(0 0 14px rgba(56,189,248,.8))}.pt-label{position:absolute;margin-top:240px;text-align:center;font:800 12px 'JetBrains Mono',monospace;letter-spacing:3px;color:#cbd5e1;text-transform:uppercase}.pt-label small{display:block;margin-top:10px;font:600 9px 'JetBrains Mono',monospace;color:#64748b;letter-spacing:1.5px}@keyframes ptGrid{to{transform:perspective(500px) rotateX(60deg) translateY(42px)}}@keyframes ptPulse{50%{transform:scale(1.08);box-shadow:0 0 55px rgba(56,189,248,.4),inset 0 0 45px rgba(139,92,246,.35)}}@keyframes ptOrbit{to{transform:rotate(360deg)}}
+.portal-transition .pt-center-wrap{position:relative;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:340px}.pt-progress-ring{width:190px;height:190px;border-radius:50%;padding:7px;background:conic-gradient(#22d3ee 0deg,#8b5cf6 0deg,#ec4899 0deg,rgba(148,163,184,.14) 0deg);box-shadow:0 0 45px rgba(34,211,238,.18),inset 0 0 35px rgba(139,92,246,.15);display:grid;place-items:center;position:relative;transition:background .05s linear}.pt-progress-ring::before{content:"";position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(34,211,238,.22);animation:ptOrbit 4s linear infinite}.pt-progress-inner{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,#102944 0%,#050914 72%);border:1px solid rgba(103,232,249,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 35px rgba(34,211,238,.12)}.pt-percent{font:900 34px 'JetBrains Mono',monospace;color:#e0f2fe;text-shadow:0 0 16px rgba(34,211,238,.7)}.pt-logo-text{margin-top:4px;font:900 10px 'JetBrains Mono',monospace;letter-spacing:2px;color:#67e8f9}.pt-brand{margin-top:24px;font:900 21px 'Plus Jakarta Sans',sans-serif;letter-spacing:3px;color:#f8fafc;text-align:center;text-shadow:0 0 20px rgba(34,211,238,.35)}.pt-status{margin-top:9px;font:800 10px 'JetBrains Mono',monospace;letter-spacing:2.5px;color:#67e8f9;animation:uxPulse 1s infinite}.pt-label{position:static!important;margin-top:13px!important;text-align:center;font:800 10px 'JetBrains Mono',monospace;letter-spacing:2px;color:#94a3b8;text-transform:uppercase}.pt-label span{display:block;color:#cbd5e1}.pt-label small{display:block;margin-top:8px;font:600 8px 'JetBrains Mono',monospace;color:#64748b;letter-spacing:1.1px}.pt-orbital{position:absolute;border-radius:50%;border:1px dashed rgba(34,211,238,.18);pointer-events:none}.orbital-a{width:420px;height:420px;animation:ptOrbit 8s linear infinite}.orbital-b{width:560px;height:560px;border-color:rgba(236,72,153,.12);animation:ptOrbit 13s linear infinite reverse}.market-only-grid{grid-template-columns:1fr!important}.market-only-grid .live-info-card{min-height:140px}
+
+
+
+/* Major billing/brand UX: hospital sees only its clinical intake + its own bills. */
+body.role-hospital #modernCompanyPlanCenter,
+body.role-hospital #adminBrandControl,
+body.role-hospital #unifiedBillingCenter,
+body.role-hospital #billingSection { display:none!important; }
+.portal-brand-quote{font-size:clamp(13px,1.6vw,17px);color:#cbd5e1;max-width:760px;margin:8px auto 0;font-weight:600;letter-spacing:.01em}
+#portalBrandTitle{font-size:clamp(28px,4.5vw,54px);letter-spacing:-.045em;text-shadow:0 0 28px rgba(34,211,238,.16)}
+.batch-billing-row{display:grid;grid-template-columns:1.6fr repeat(4,minmax(80px,.5fr));gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}
+.batch-billing-row:last-child{border-bottom:0}
+@media(max-width:700px){.batch-billing-row{grid-template-columns:1fr 1fr}.batch-billing-row .batch-wide{grid-column:1/-1}}
+
+/* Hospital role: dedicated one-page-per-workflow navigation */
+body.role-hospital .hospital-page-only { display: block; }
+body.role-hospital #navReports { display: none !important; }
+body.role-hospital #clinicalWorklistPage.hospital-report-page { margin-top: 18px; }
+body.role-hospital .hospital-page-note { display: block; }
+</style>
+<style id="major-modern-application-css">
+:root{--m-bg:#07111f;--m-panel:rgba(11,23,40,.72);--m-line:rgba(148,163,184,.13);--m-cyan:#22d3ee;--m-violet:#8b5cf6;--m-green:#34d399}
+body.major-modern-ui{background:radial-gradient(circle at 50% -10%,rgba(34,211,238,.10),transparent 34%),radial-gradient(circle at 90% 40%,rgba(139,92,246,.08),transparent 32%),#050b14;overflow-x:hidden}
+body.major-modern-ui::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(115deg,transparent 0%,rgba(34,211,238,.035) 45%,transparent 58%);transform:translate3d(-20%,0,0);animation:mSurface 14s linear infinite}
+body.major-modern-ui::after{content:"";position:fixed;inset:-30%;pointer-events:none;z-index:-1;background:conic-gradient(from 0deg,transparent 0 78%,rgba(139,92,246,.035) 84%,transparent 90%);animation:mOrbit 30s linear infinite}
+@keyframes mSurface{to{transform:translate3d(20%,0,0)}}
+@keyframes mOrbit{to{transform:rotate(360deg)}}
+.modern-command-surface{position:relative;min-height:180px;margin:0 0 18px;border:1px solid var(--m-line);border-radius:24px;overflow:hidden;background:linear-gradient(135deg,rgba(10,24,42,.92),rgba(7,14,27,.78));box-shadow:0 20px 60px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.05);isolation:isolate}
+.modern-command-surface::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 15%,rgba(34,211,238,.08) 42%,transparent 55%);transform:translateX(-120%);animation:mSweep 8s ease-in-out infinite}
+@keyframes mSweep{50%,100%{transform:translateX(120%)}}
+.mcs-glow{position:absolute;width:280px;height:280px;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(34,211,238,.14),rgba(139,92,246,.06) 42%,transparent 70%);filter:blur(8px);animation:mBreath 4s ease-in-out infinite}
+@keyframes mBreath{50%{transform:translate(-50%,-50%) scale(1.12);opacity:.78}}
+.mcs-grid{position:absolute;inset:0;opacity:.22;background-image:linear-gradient(rgba(148,163,184,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.08) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(to bottom,transparent,#000 35%,#000 70%,transparent)}
+.mcs-content{position:relative;z-index:2;padding:30px 32px;text-align:center}
+.mcs-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 11px;border:1px solid rgba(52,211,153,.24);border-radius:999px;background:rgba(52,211,153,.06);color:#a7f3d0;font-size:9px;font-weight:900;letter-spacing:.16em}
+.mcs-pulse{width:7px;height:7px;border-radius:50%;background:var(--m-green);box-shadow:0 0 12px var(--m-green);animation:mPulse 1.8s ease-in-out infinite}
+@keyframes mPulse{50%{transform:scale(1.5);opacity:.55}}
+.mcs-content h2{margin:14px 0 5px;font-size:clamp(24px,4vw,38px);letter-spacing:-.035em;background:linear-gradient(90deg,#f8fafc,#67e8f9,#c4b5fd,#f8fafc);background-size:250% auto;color:transparent;background-clip:text;animation:mText 8s linear infinite}
+@keyframes mText{to{background-position:250% center}}
+.mcs-content p{margin:0;color:#94a3b8;font-size:12px}
+.modern-company-plan{position:relative;margin:0 0 20px;padding:20px;border:1px solid var(--m-line);border-radius:22px;background:linear-gradient(145deg,rgba(10,21,37,.86),rgba(6,13,24,.72));box-shadow:0 16px 48px rgba(0,0,0,.16);overflow:hidden}
+.modern-company-plan::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(34,211,238,.035),transparent);transform:translateX(-100%);animation:mSweep 10s ease-in-out infinite}
+.mcp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;position:relative;z-index:2}.mcp-title{font-size:15px;font-weight:900}.mcp-sub{font-size:10px;color:#64748b;margin-top:4px}.mcp-verified{font-size:9px;font-weight:900;color:#a7f3d0;border:1px solid rgba(52,211,153,.2);padding:5px 8px;border-radius:999px;background:rgba(52,211,153,.05);white-space:nowrap}
+.mcp-company{margin-top:14px;padding:13px;border-radius:15px;border:1px solid rgba(148,163,184,.1);background:rgba(255,255,255,.025);position:relative;z-index:2}.mcp-company-name{font-size:18px;font-weight:900;letter-spacing:-.02em}.mcp-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.mcp-chip{font-size:9px;color:#cbd5e1;padding:5px 8px;border-radius:8px;background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.09)}
+.mcp-plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px;position:relative;z-index:2}.mcp-plan{padding:13px;border-radius:15px;border:1px solid rgba(148,163,184,.10);background:rgba(255,255,255,.025);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}.mcp-plan:hover{transform:translateY(-2px);border-color:rgba(34,211,238,.28);box-shadow:0 12px 30px rgba(0,0,0,.18)}.mcp-plan-name{font-weight:900;font-size:12px}.mcp-plan-desc{font-size:9px;color:#64748b;margin-top:5px;min-height:24px}.mcp-plan-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px}.mcp-price{font-size:15px;font-weight:900;color:#67e8f9}.mcp-type{font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa}.mcp-empty{padding:16px;text-align:center;color:#64748b;font-size:10px;border:1px dashed rgba(148,163,184,.15);border-radius:14px}
+.legacy-hidden-system-ui{display:none!important}.ux-top-status{display:none!important}
+@media(max-width:700px){.mcs-content{padding:25px 18px}.modern-company-plan{padding:15px}.mcp-head{display:block}.mcp-verified{display:inline-block;margin-top:9px}.mcp-plans{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){body.major-modern-ui::before,body.major-modern-ui::after,.modern-command-surface::before,.mcs-glow,.mcs-pulse,.mcs-content h2,.modern-company-plan::after{animation:none!important}.mcp-plan{transition:none}}
+</style>
+<style id="advanced-billing-css">
+.adv-bill-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0}
+.adv-bill-tile{padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:var(--bg-card)}
+.adv-bill-tile b{display:block;font-size:12px;margin-bottom:5px}.adv-bill-tile small{font-size:10px;color:var(--text-muted);line-height:1.45}
+.adv-bill-box{margin-top:12px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.08)}
+.adv-bill-title{font-weight:800;margin-bottom:10px}.adv-bill-form{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.adv-bill-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}.adv-bill-status{font-size:11px;color:var(--text-muted)}
+.adv-upi-preview{display:flex;align-items:center;gap:12px;margin-top:10px}.adv-upi-preview img{width:145px;height:145px;background:#fff;padding:7px;border-radius:8px}
+.adv-plan-row{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:11px}
+.adv-invoice-paper{background:#fff;color:#111;padding:28px;font-family:Arial,sans-serif}.adv-invoice-paper table{width:100%;border-collapse:collapse;margin-top:16px}.adv-invoice-paper th,.adv-invoice-paper td{padding:8px;border-bottom:1px solid #ddd}.adv-invoice-paper .r{text-align:right}.adv-invoice-paper .total{font-size:20px;font-weight:800}.adv-invoice-paper .qr{width:155px;height:155px;object-fit:contain}.adv-invoice-paper .sign{max-width:190px;max-height:75px;object-fit:contain}
+@media(max-width:900px){.adv-bill-grid{grid-template-columns:1fr 1fr}.adv-bill-form{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.adv-bill-grid,.adv-bill-form{grid-template-columns:1fr}}
+@media print{body *{visibility:hidden!important}#advInvoicePaper,#advInvoicePaper *{visibility:visible!important}#advInvoicePaper{position:absolute;left:0;top:0;width:100%}}
+</style>
+
+<style>
+</style>
+
+
+<style id="v200-live-vibe-css">
+:root{--live-cyan:#22d3ee;--live-violet:#8b5cf6;--live-green:#34d399;--live-amber:#fbbf24;}
+body.v200-live-vibe::before{content:"";position:fixed;inset:-30%;z-index:-1;pointer-events:none;background:radial-gradient(circle at 18% 20%,rgba(34,211,238,.12),transparent 28%),radial-gradient(circle at 82% 15%,rgba(139,92,246,.12),transparent 30%),radial-gradient(circle at 55% 90%,rgba(52,211,153,.08),transparent 28%);animation:vibeDrift 18s ease-in-out infinite alternate;}
+@keyframes vibeDrift{from{transform:translate3d(-1%,0,0) scale(1)}to{transform:translate3d(1%,1%,0) scale(1.04)}}
+.live-status{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--live-cyan) 35%,transparent);background:color-mix(in srgb,var(--live-cyan) 9%,transparent);font-size:10px;font-weight:800;letter-spacing:.3px;white-space:nowrap;box-shadow:0 0 0 0 rgba(34,211,238,.2);animation:liveGlow 2s infinite;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--live-cyan);box-shadow:0 0 10px var(--live-cyan);animation:livePulse 1.2s infinite;}
+.live-status[data-state="reported"]{--state:var(--live-green)} .live-status[data-state="processing"]{--state:var(--live-amber)} .live-status[data-state="reviewing"]{--state:var(--live-violet)} .live-status[data-state="typing"]{--state:#f472b6} .live-status[data-state="queued"]{--state:var(--live-cyan)} .live-status[data-state="reported"],.live-status[data-state="processing"],.live-status[data-state="reviewing"],.live-status[data-state="typing"],.live-status[data-state="queued"]{color:var(--state);border-color:color-mix(in srgb,var(--state) 38%,transparent);background:color-mix(in srgb,var(--state) 9%,transparent)}
+.live-status[data-state="reported"] .live-dot,.live-status[data-state="processing"] .live-dot,.live-status[data-state="reviewing"] .live-dot,.live-status[data-state="typing"] .live-dot,.live-status[data-state="queued"] .live-dot{background:var(--state);box-shadow:0 0 11px var(--state)}
+@keyframes livePulse{50%{transform:scale(1.55);opacity:.55}} @keyframes liveGlow{50%{box-shadow:0 0 18px rgba(34,211,238,.08)}}
+.report-flow{display:flex;align-items:center;gap:4px;margin-top:5px;flex-wrap:wrap}.flow-step{font-size:9px;padding:3px 6px;border-radius:6px;background:rgba(148,163,184,.08);color:var(--text-muted);border:1px solid var(--border)}.flow-step.active{color:var(--live-cyan);border-color:color-mix(in srgb,var(--live-cyan) 35%,transparent);background:color-mix(in srgb,var(--live-cyan) 8%,transparent);animation:stepShimmer 1.7s infinite}.flow-arrow{font-size:9px;color:var(--text-muted)}
+@keyframes stepShimmer{50%{transform:translateY(-1px);box-shadow:0 0 12px rgba(34,211,238,.12)}}
+.live-touch{position:relative;overflow:hidden}.live-touch::after{content:"";position:absolute;inset:0;transform:translateX(-110%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:touchSweep 4.5s infinite;pointer-events:none}@keyframes touchSweep{55%,100%{transform:translateX(110%)}}
+.typing-caret{display:inline-block;width:5px;height:12px;background:#f472b6;vertical-align:-2px;margin-left:3px;animation:caretBlink .75s infinite}@keyframes caretBlink{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<style id="ap-medico-color-upgrade">
+  body{
+    background:
+      radial-gradient(circle at 8% 5%, rgba(14,165,233,.18), transparent 28%),
+      radial-gradient(circle at 92% 12%, rgba(236,72,153,.16), transparent 25%),
+      radial-gradient(circle at 50% 100%, rgba(20,184,166,.13), transparent 32%),
+      var(--bg-body);
+  }
+  body::before,body::after{content:"";position:fixed;z-index:-1;border-radius:999px;filter:blur(55px);pointer-events:none;opacity:.45;animation:apFloat 12s ease-in-out infinite alternate;}
+  body::before{width:260px;height:260px;left:-80px;top:18%;background:#38bdf8;}
+  body::after{width:300px;height:300px;right:-100px;bottom:10%;background:#f472b6;animation-delay:-5s;}
+  @keyframes apFloat{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(20px,-18px,0) scale(1.08)}}
+  .card,.stat-card,.modern-company-plan,.live-queue-panel,.live-patient-panel,.ai-insights-panel{
+    border-color:color-mix(in srgb,var(--primary) 22%,var(--border));
+    box-shadow:0 12px 30px rgba(15,23,42,.08),0 0 0 1px rgba(255,255,255,.18) inset;
+  }
+  .card{background:linear-gradient(145deg,color-mix(in srgb,var(--bg-card) 94%,white),var(--bg-card));}
+  .stat-card{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--bg-card),color-mix(in srgb,var(--primary) 8%,var(--bg-card)));}
+  .stat-card::after{content:"";position:absolute;width:90px;height:90px;right:-30px;top:-35px;border-radius:50%;background:var(--accent);opacity:.12;filter:blur(2px);}
+  .btn,.btn-primary,.btn-success,.btn-warning,.btn-outline{transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;}
+  .btn:hover{transform:translateY(-2px);filter:saturate(1.12);box-shadow:0 8px 20px rgba(2,132,199,.16);}
+  .case-timing{margin-top:7px;padding:7px 8px;border-radius:10px;background:linear-gradient(135deg,rgba(14,165,233,.08),rgba(236,72,153,.07));border:1px solid color-mix(in srgb,var(--primary) 18%,transparent);font-size:9.5px;line-height:1.35;min-width:175px;}
+  .case-timing div{display:flex;justify-content:space-between;gap:7px;margin:2px 0;}
+  .case-timing span{color:var(--text-muted);font-weight:700;}
+  .case-timing b{color:var(--text);font-weight:800;text-align:right;}
+  .case-timing .turnaround{margin-top:4px;padding-top:4px;border-top:1px dashed color-mix(in srgb,var(--primary) 25%,transparent);}
+  .case-timing .turnaround b{color:var(--primary);}
+  @media(max-width:700px){.case-timing{min-width:150px;font-size:9px}.case-timing div{display:block}.case-timing b{display:block;text-align:left;margin-top:1px}}
+</style>
+
+  <style id="my-profile-settings-css">
+    .profile-page-card{width:100%;max-width:1050px;margin:0 auto;background:var(--bg-panel);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 14px 38px rgba(15,23,42,.08)}
+    .profile-page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:18px}
+    .profile-page-heading h2{font-size:25px;line-height:1.2;margin:3px 0 5px;color:var(--text)}
+    .profile-page-heading p{font-size:12px;color:var(--text-muted);margin:0}
+    .profile-kicker{font-size:9px;font-weight:900;letter-spacing:1.5px;color:var(--primary)}
+    .profile-account-chip{padding:7px 11px;border:1px solid var(--border);border-radius:999px;font-size:9px;font-weight:900;letter-spacing:.8px;color:var(--text-muted)}
+    .profile-identity-panel{display:flex;align-items:center;gap:22px;padding:18px;border:1px solid var(--border);background:var(--bg-card);border-radius:15px;margin-bottom:18px}
+    .profile-avatar-wrap{display:flex;align-items:center;gap:15px;flex:0 0 auto}
+    .profile-avatar-frame{width:104px;height:104px;flex:0 0 104px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0ea5e9,#7c3aed);color:#fff;font-size:30px;font-weight:900;border:4px solid var(--bg-panel);box-shadow:0 0 0 1px var(--border)}
+    .profile-avatar-frame img{width:100%;height:100%;object-fit:cover}
+    .profile-avatar-actions{display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+    .profile-avatar-actions .btn{font-size:11px;padding:7px 12px}
+    .profile-avatar-actions small,.profile-field small{font-size:10px;line-height:1.45;color:var(--text-muted)}
+    .profile-summary{min-width:0;border-left:1px solid var(--border);padding-left:22px}
+    .profile-summary-name{font-size:19px;font-weight:900;color:var(--text);overflow-wrap:anywhere}
+    .profile-summary-email{font-size:11px;color:var(--text-muted);margin-top:5px;overflow-wrap:anywhere}
+    .profile-summary-note{font-size:10px;color:var(--text-muted);margin-top:9px;line-height:1.5}
+    .profile-details-panel{border:1px solid var(--border);border-radius:15px;padding:18px;background:var(--bg-card)}
+    .profile-details-title{font-size:14px;font-weight:900;margin-bottom:16px;color:var(--text)}
+    .profile-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+    .profile-field{min-width:0;display:flex;flex-direction:column;gap:6px}
+    .profile-field-wide{grid-column:1/-1}
+    .profile-field label{font-size:11px;font-weight:800;color:var(--text)}
+    .profile-field label span{color:#ef4444}
+    .profile-field input{width:100%;min-width:0}
+    .profile-field input[readonly]{background:rgba(148,163,184,.1);color:var(--text-muted);cursor:not-allowed}
+    .profile-form-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:19px;padding-top:15px;border-top:1px solid var(--border)}
+    #profileSaveStatus{font-size:10px;color:var(--text-muted)}
+    @media(max-width:650px){.profile-page-card{padding:14px;border-radius:13px}.profile-page-heading h2{font-size:21px}.profile-identity-panel{align-items:flex-start;flex-direction:column}.profile-avatar-wrap{align-items:flex-start;flex-wrap:wrap}.profile-summary{border-left:0;border-top:1px solid var(--border);padding:13px 0 0;width:100%}.profile-form-grid{grid-template-columns:1fr}.profile-field-wide{grid-column:auto}.profile-form-footer{align-items:stretch;flex-direction:column}.profile-form-footer .btn{width:100%}}
+  </style>
+
+<style>
+.update-centre-btn{position:relative;display:inline-flex;align-items:center;gap:7px;font-weight:800}.update-centre-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;box-shadow:0 0 0 3px rgba(34,197,94,.12)}.update-centre-modal{position:fixed;inset:0;background:rgba(2,6,23,.72);backdrop-filter:blur(7px);z-index:9999;display:none;align-items:center;justify-content:center;padding:18px}.update-centre-card{width:min(620px,96vw);max-height:90vh;overflow:auto;background:var(--bg-card,#0f172a);border:1px solid var(--border,#334155);border-radius:18px;padding:22px;box-shadow:0 24px 80px rgba(0,0,0,.4)}.update-centre-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:18px}.update-centre-head h3{margin:0;font-size:20px}.update-centre-head p{margin:5px 0 0;color:var(--text-muted);font-size:11px}.update-version-box{border:1px solid var(--border);border-radius:14px;padding:15px;margin:12px 0;background:rgba(148,163,184,.06)}.update-version-line{display:flex;justify-content:space-between;gap:12px;margin:7px 0;font-size:12px}.update-version-line strong{color:var(--text)}.update-status{font-size:11px;color:var(--text-muted);line-height:1.5}.update-admin-form{border-top:1px solid var(--border);margin-top:18px;padding-top:18px}.update-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.update-actions .btn{flex:1;min-width:150px}.update-file-note{font-size:10px;color:var(--text-muted);margin-top:6px}.update-new-badge{display:none;background:#ef4444;color:#fff;border-radius:999px;padding:2px 7px;font-size:9px;font-weight:900}
+@media(max-width:700px){.update-version-line{flex-direction:column;gap:3px}.update-centre-modal{padding:10px}.update-centre-card{padding:16px}}
+</style>
+</head>
+<body class="role-admin" id="pageBody">
+
+  <!-- NEXT-LEVEL 5-SECOND PORTAL OPENING ANIMATION -->
+  <div class="portal-transition" id="portalTransition" aria-hidden="true">
+    <div class="pt-grid"></div>
+    <div class="pt-orbital orbital-a"></div><div class="pt-orbital orbital-b"></div>
+    <div class="pt-center-wrap">
+      <div class="pt-progress-ring" id="ptProgressRing"><div class="pt-progress-inner">
+        <div class="pt-percent" id="ptPercent">0%</div>
+        <div class="pt-logo-text">AP MEDICO</div>
+      </div></div>
+      <div class="pt-brand">AP MEDICO DIAGNOSIS</div>
+      <div class="pt-status" id="ptStatus">CONNECTING SESSION</div>
+      <div class="pt-label"><span>SECURE CLINICAL NETWORK</span><small>AUTHENTICATING • SYNCING WORKSPACE • PREPARING DASHBOARD</small></div>
+    </div>
+  </div>
+
+  <!-- ================= 1. LOGIN OVERLAY ================= -->
+  <div class="auth-overlay login-cinematic" id="authModal">
+    <div class="auth-card">
+      <div class="lotus-bloom-box">
+        <div class="lotus-glow-core"></div>
+        <div class="petal p1"></div>
+        <div class="petal p2"></div>
+        <div class="petal p3"></div>
+        <div class="petal p4"></div>
+        <div class="petal p5"></div>
+        <div class="petal p6"></div>
+        <div class="petal p7"></div>
+      </div>
+
+      <div class="auth-title">Tele-Diagnostic Portal</div>
+      <p class="auth-subtitle">Secure Multi-Terminal Specialist Network</p>
+
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Select Access Role</label>
+          <select id="loginRole" class="form-control">
+            <option value="admin">Administrator</option>
+            <option value="hospital">Hospital Terminal</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Username / Email</label>
+          <input type="text" id="loginId" class="form-control" placeholder="Enter Login ID" required autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPass" class="form-control" placeholder="Enter Password" required autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn btn-submit">Sign In to Dashboard</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= 2. WORKSPACE SETTINGS DRAWER ================= -->
+  <div class="drawer-overlay" id="drawerBackdrop" onclick="toggleCustomizerDrawer()"></div>
+  <aside class="customization-drawer" id="customizerDrawer">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 18px;">
+      <h3 style="font-size: 15px; font-weight: 700;">Workspace Settings</h3>
+      <button class="btn btn-outline" style="padding: 4px 8px;" onclick="toggleCustomizerDrawer()">✕</button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <div>
+        <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Display Theme</label>
+        <select class="form-control" style="margin-top: 6px;" onchange="changeTheme(this.value)">
+          <option value="dark">Clinical Slate (Dark)</option>
+          <option value="light">Clinical Mist (Light)</option>
+          <option value="contrast">High Contrast</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Font Size Scaling</label>
+        <select class="form-control" style="margin-top: 6px;" onchange="adjustFontScale(this.value)">
+          <option value="13px">Compact (13px)</option>
+          <option value="14px" selected>Regular (14px)</option>
+          <option value="16px">Enlarged (16px)</option>
+        </select>
+      </div>
+
+      <div class="admin-only">
+        <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Broadcast Holiday Notice</label>
+        <input type="text" id="customHolidayText" class="form-control" style="margin-top: 6px;" placeholder="Update holiday bulletin...">
+        <button class="btn btn-primary" style="margin-top: 8px; width: 100%;" onclick="updateHolidayBroadcast()">Broadcast Notice</button>
+      </div>
+
+      <div>
+        <button class="btn btn-outline" style="width: 100%;" onclick="exportWorklistJson()">📥 Backup Worklist JSON</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= 3. MAIN WORKSPACE ================= -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><path d="M12 2C9.5 7 5 11 5 16a7 7 0 0 0 14 0c0-5-4.5-9-7-14z"/><path d="M12 22v-9"/><path d="M7 17a5 5 0 0 1 10 0"/></svg>
+        <div class="brand-title">Tele-Diagnostic</div>
+      </div>
+
+      <ul class="sidebar-nav">
+        <div class="page-nav-label">Workspace</div>
+        <li class="sidebar-item active" id="navDashboard" onclick="showAppPage('dashboard')">Dashboard</li>
+        <li class="sidebar-item hospital-only" id="navHospitalUpload" onclick="showAppPage('hospitalUpload')">Upload</li>
+        <li class="sidebar-item hospital-only" id="navHospitalUnreported" onclick="showAppPage('hospitalUnreported')">Unreported</li>
+        <li class="sidebar-item hospital-only" id="navHospitalReports" onclick="showAppPage('hospitalReports')">Reports</li>
+        <li class="sidebar-item" id="navReports" onclick="showAppPage('reports')">Patient Reports</li>
+        <li class="sidebar-item admin-only" id="navBilling" onclick="showAppPage('billing')">Advanced Billing & Payment</li>
+        <li class="sidebar-item admin-only" id="navMonthlyBilling" onclick="showAppPage('monthlyBilling')">Monthly Invoicing & Summary</li>
+        <li class="sidebar-item admin-only" id="navSavedInvoices" onclick="showAppPage('savedInvoices')">Saved Invoices</li>
+        <li class="sidebar-item admin-only" id="navMessageCentre" onclick="showAppPage('messageCentre')">Message Centre <span id="messageCentreBadge" class="message-unread-badge" style="display:none">0</span></li>
+        <li class="sidebar-item hospital-only" id="navHospitalBills" onclick="showAppPage('hospitalBills')">My Monthly Bills</li>
+        <li class="sidebar-item" id="navMyProfile" onclick="showAppPage('profile')">My Profile</li>
+
+        <div class="page-nav-divider"></div>
+        <div class="sidebar-heading">Dedicated Modalities</div>
+        <li class="sidebar-item" id="navAll" onclick="filterQueue('All')">All Studies</li>
+        <li class="sidebar-item" id="navEeg" onclick="filterQueue('EEG')">EEG Studies</li>
+        <li class="sidebar-item" id="navPft" onclick="filterQueue('PFT')">PFT Spirometry</li>
+
+        <div class="sidebar-heading admin-only">Specialist Config</div>
+        <li class="sidebar-item admin-only" onclick="openHospitalModal()">+ Add Hospital Node</li>
+      </ul>
+    </aside>
+
+    <div class="main-wrapper">
+      <div class="broadcast-banner">
+        <span class="broadcast-pill">Notice</span>
+        <div class="marquee-text" id="broadcastContent">
+          Upcoming Government Holidays: Festive Recess scheduled. Emergency reporting queues remain fully operational 24/7.
+        </div>
+      </div>
+
+      <div class="ip-linker-ribbon admin-only legacy-hidden-system-ui">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: #34d399; font-weight: 700;">● IP NODE ACTIVE:</span>
+          <span style="font-family: 'JetBrains Mono', monospace; color: #38bdf8;" id="ipDisplay">192.168.1.105:8080/portal</span>
+          <span style="color: #64748b;">(Multi-terminal auto-push active)</span>
+        </div>
+        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px;" onclick="promptIpChange()">Change Host IP</button>
+      </div>
+
+      <header class="top-header">
+        <div class="clock-display legacy-hidden-system-ui" id="clock12">
+          🕒 12:00:00 AM | SAT, 12-SEP-2026
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 9px; flex-wrap:wrap; justify-content:flex-end;">
+          <button class="btn btn-outline update-centre-btn" onclick="openUpdateCentre()" title="Check and manage software updates"><span class="update-centre-dot"></span>Update Centre <span id="updateNewBadge" class="update-new-badge">NEW</span></button>
+          <span class="badge-session" id="userRoleBadge">Admin: Pritam</span>
+          <button class="btn btn-outline" onclick="logout()">Sign Out</button>
+          <div class="menu-btn-hamburger" title="Settings" onclick="toggleCustomizerDrawer()">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+          </div>
+        </div>
+      </header>
+
+      <div class="update-centre-modal" id="updateCentreModal" role="dialog" aria-modal="true" aria-labelledby="updateCentreTitle">
+  <div class="update-centre-card">
+    <div class="update-centre-head">
+      <div><h3 id="updateCentreTitle">Software Update Centre</h3><p>Send one new HTML version from Admin. Hospitals can check and download the latest version here.</p></div>
+      <button class="btn btn-outline" onclick="closeUpdateCentre()">✕</button>
+    </div>
+    <div class="update-version-box">
+      <div class="update-version-line"><strong>Installed Version</strong><span id="installedAppVersion">Current version</span></div>
+      <div class="update-version-line"><strong>Latest Available</strong><span id="latestAppVersion">Checking…</span></div>
+      <div id="latestUpdateNotes" class="update-status" style="margin-top:10px"></div>
+      <div class="update-actions">
+        <button class="btn btn-primary" onclick="checkForAppUpdate()">Check for Update</button>
+        <button class="btn btn-success" id="downloadLatestUpdateBtn" onclick="downloadLatestAppUpdate()" disabled>Download Latest Version</button>
+      </div>
+      <div id="updateCentreStatus" class="update-status" style="margin-top:10px">Checking Supabase update centre…</div>
+    </div>
+    <div class="update-admin-form admin-only">
+      <strong style="font-size:13px">Admin — Publish New Version</strong>
+      <p class="update-status" style="margin:5px 0 12px">Upload the new <b>.html</b> file. The file is stored securely and becomes the version hospitals can download.</p>
+      <div class="profile-field"><label>Version *</label><input id="updateVersionInput" class="form-control" placeholder="e.g. V2.1.0" maxlength="40"></div>
+      <div class="profile-field" style="margin-top:10px"><label>Release notes</label><textarea id="updateNotesInput" class="form-control" rows="3" placeholder="What changed in this version?"></textarea></div>
+      <div class="profile-field" style="margin-top:10px"><label>Update HTML file *</label><input id="updateHtmlFile" class="form-control" type="file" accept=".html,text/html"></div>
+      <div class="update-file-note">Tip: upload the complete new AP MEDICO HTML file, not a partial file.</div>
+      <div class="update-actions"><button class="btn btn-primary" onclick="publishAppUpdate()">Publish Update</button></div>
+      <div id="publishUpdateStatus" class="update-status" style="margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<main class="content-area">
+
+        <!-- BRAND HERO: company identity only; no weather/location/system-time UI -->
+        <section class="modern-command-surface" id="modernCommandSurface" aria-label="AP DIAGNOSIS MEDICO">
+          <div class="mcs-glow"></div>
+          <div class="mcs-grid"></div>
+          <div class="mcs-content">
+            <div class="mcs-eyebrow" id="currentSessionIdentity"><span class="mcs-pulse"></span> <span id="currentSessionIdentityText">Loading account…</span></div>
+            <h2 id="portalBrandTitle">AP DIAGNOSIS MEDICO SOLUTIONS</h2>
+            <p id="portalBrandQuote">Precision in every study. Care in every report.</p>
+          </div>
+        </section>
+
+        <section class="metric-grid professional-metrics" id="dashboardMetrics">
+          <div class="stat-card card-today">
+            <div class="stat-title">Today Cases</div>
+            <div class="stat-count" id="countToday">0 Cases</div>
+          </div>
+          <div class="stat-card card-month">
+            <div class="stat-title">This Month</div>
+            <div class="stat-count" id="countMonth">0 Cases</div>
+          </div>
+          <div class="stat-card card-year">
+            <div class="stat-title">This Year</div>
+            <div class="stat-count" id="countYear">0 Cases</div>
+          </div>
+          <div class="stat-card card-total">
+            <div class="stat-title">Total Cases</div>
+            <div class="stat-count" id="countTotal">0 Cases</div>
+          </div>
+        </section>
+
+        <section id="messageCentrePage" class="card admin-only message-centre-card" style="display:none;">
+          <div class="card-header"><span>Message Centre</span><span id="messageCentreStatus" style="font-size:10px;color:var(--text-muted);">Supabase messages</span></div>
+          <div id="messageCentreList" class="message-list"><div class="live-empty">Loading messages…</div></div>
+        </section>
+
+        <!-- ================= MY PROFILE ================= -->
+        <section id="profilePage" class="profile-page-card app-page-hidden" aria-label="My profile settings">
+          <div class="profile-page-heading">
+            <div><div class="profile-kicker">ACCOUNT SETTINGS</div><h2>My Profile</h2><p>Your name, sign-in details and picture</p></div>
+            <div class="profile-account-chip" id="profileAccountRole">ACCOUNT</div>
+          </div>
+          <div class="profile-identity-panel">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar-frame">
+                <img id="profileAvatarPreviewImg" alt="Profile picture" style="display:none;">
+                <span id="profileAvatarInitials">AP</span>
+              </div>
+              <div class="profile-avatar-actions">
+                <input type="file" id="profileAvatarFile" accept="image/png,image/jpeg" hidden onchange="previewMyProfileAvatar()">
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('profileAvatarFile').click()">Choose picture</button>
+                <button type="button" class="btn btn-outline" onclick="removeMyProfileAvatar()">Remove</button>
+                <small>JPG or PNG. A square picture crops best. Maximum 5 MB.</small>
+              </div>
+            </div>
+            <div class="profile-summary">
+              <div class="profile-summary-name" id="profileSummaryName">Your profile</div>
+              <div class="profile-summary-email" id="profileSummaryEmail">Sign-in account</div>
+              <div class="profile-summary-note">Your profile information is saved securely to your signed-in account.</div>
+            </div>
+          </div>
+          <div class="profile-details-panel">
+            <div class="profile-details-title">Profile details</div>
+            <div class="profile-form-grid">
+              <div class="profile-field"><label for="profileFirstName">First name <span>*</span></label><input id="profileFirstName" class="form-control" type="text" maxlength="80" autocomplete="given-name" placeholder="Enter first name" required></div>
+              <div class="profile-field"><label for="profileLastName">Last name <span>*</span></label><input id="profileLastName" class="form-control" type="text" maxlength="80" autocomplete="family-name" placeholder="Enter last name" required></div>
+              <div class="profile-field profile-field-wide"><label for="profileUsername">User name <span>*</span></label><input id="profileUsername" class="form-control" type="text" readonly aria-readonly="true"><small>The name currently used to sign in. It is read-only here so your existing login is not changed accidentally.</small></div>
+              <div class="profile-field profile-field-wide"><label for="profileDisplayName">Profile name</label><input id="profileDisplayName" class="form-control" type="text" maxlength="120" placeholder="Name shown in your profile"><small>This name is displayed in your AP MEDICO workspace.</small></div>
+            </div>
+            <div class="profile-form-footer"><span id="profileSaveStatus" role="status">Changes are not saved yet.</span><button type="button" class="btn btn-primary" id="saveMyProfileBtn" onclick="saveMyProfileSettings()">Save profile</button></div>
+          </div>
+        </section>
+
+        <!-- ================= LIVE TELE-REPORTING DASHBOARD ================= -->
+        <section id="liveTeleDashboard" class="card admin-only doctor-only" style="margin-top:18px;">
+          <div class="card-header">
+            <span>Live Tele-Reporting Dashboard</span>
+            <span class="live-sync-badge"><i></i> REALTIME</span>
+          </div>
+          <div class="live-tele-grid">
+            <div class="live-queue-panel">
+              <div class="live-panel-title">Incoming Queue <span id="liveQueueCount">0</span></div>
+              <div id="liveQueueList" class="live-queue-list"><div class="live-empty">Waiting for new EEG / PFT studies…</div></div>
+            </div>
+            <div class="live-patient-panel">
+              <div class="live-panel-title">Patient Snapshot</div>
+              <div id="livePatientSnapshot" class="live-patient-snapshot"><div class="live-empty">Select a case to view patient information.</div></div>
+            </div>
+            <div class="ai-insights-panel">
+              <div class="ai-insights-head"><span>✨ Clinical Assist</span><small>Decision support only</small></div>
+              <div id="aiInsightsContent" class="ai-insights-content">Select a case to show documentation/review prompts. This does not diagnose disease.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="modern-company-plan admin-only" id="modernCompanyPlanCenter" aria-label="Saved company details and active plans">
+          <div class="mcp-head">
+            <div><div class="mcp-title">Company & Active Plans</div><div class="mcp-sub">Only records saved in the Supabase database are displayed.</div></div>
+            <div class="mcp-verified">● DATABASE VERIFIED</div>
+          </div>
+          <div class="mcp-company" id="mcpCompanyDetails"><div class="mcp-empty">Loading saved company details…</div></div>
+          <div class="mcp-plans" id="mcpPlanList"><div class="mcp-empty">Syncing saved active plans from database…</div></div>
+        </section>
+
+        <!-- Intake & Upload Panels -->
+        <div class="grid-forms" id="patientReportIntakeArea">
+          
+          <!-- Hospital Patient Intake -->
+          <div class="card hospital-intake-only">
+            <div class="card-header">
+              <span>Patient Intake & Telemetry Upload</span>
+              <span style="font-size: 11px; font-weight: 600; color: var(--teal);">Live Hospital Terminal</span>
+            </div>
+            <form onsubmit="handlePatientSubmit(event)">
+              <div class="form-group">
+                <label>Originating Hospital Name</label>
+                <input type="text" id="originHospital" class="form-control" placeholder="Authenticated hospital" required readonly autocomplete="organization">
+                <div id="intakeLinkedCaseBanner" style="display:none;margin-top:8px;padding:9px 11px;border-radius:10px;border:1px solid rgba(34,211,238,.28);background:rgba(34,211,238,.07);font-size:11px;color:var(--text-muted);">
+                  <strong style="color:var(--primary)">🔗 Patient details linked automatically</strong>
+                  <span id="intakeLinkedCaseText"></span>
+                  <button type="button" class="btn btn-outline" style="float:right;padding:3px 8px;font-size:10px" onclick="clearHospitalIntakeLink()">Clear link</button>
+                </div>
+                <input type="hidden" id="intakeLinkedCaseId" value="">
+              </div>
+
+              <div class="form-group">
+                <label>Patient Full Name</label>
+                <input type="text" id="intakeName" class="form-control" placeholder="Full Name" required>
+              </div>
+
+              <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                  <label>Age</label>
+                  <input type="number" id="intakeAge" class="form-control" placeholder="Years" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                  <label>PT. Sex</label>
+                  <select id="intakeSex" class="form-control" required>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                  <label>Modality</label>
+                  <select id="intakeModality" class="form-control">
+                    <option value="EEG">EEG</option>
+                    <option value="PFT">PFT</option>
+                  </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                  <label>Priority</label>
+                  <select id="intakePriority" class="form-control">
+                    <option value="Routine">Routine</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Emergency">Emergency</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Clinical Indication & Complaint</label>
+                <textarea id="intakeHistory" class="form-control" rows="2" placeholder="Symptoms / Clinical history..." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Upload Waveform / Test File / Document (EEG/PFT)</label>
+                <input type="file" id="intakeGraph" class="form-control" accept="image/*,.pdf,.dcm,.doc,.docx,.xls,.xlsx,.csv,.txt,.rtf,.json,.xml,.zip,.7z,.rar" required>
+                <small id="intakeGraphLinkHint" style="display:none;color:var(--teal);font-size:11px;line-height:1.4;margin-top:5px">Existing uploaded test file is already linked to this patient. Upload a new file only if you are replacing the previous telemetry/test file.</small>
+
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%;">Upload & Ingest to Diagnostic Queue</button>
+            </form>
+          </div>
+
+          <!-- Admin Report Upload Panel -->
+          <div class="card admin-only">
+            <div class="card-header">
+              <span>Report Verification, Review & Reassignment</span>
+              <span style="font-size: 11px; font-weight: 600; color: var(--accent);">Authorized Specialist / Administrator</span>
+            </div>
+            <form onsubmit="handleAdminReportUpload(event)">
+              <div class="form-group">
+                <label>Select Ingested Patient Case</label>
+                <select id="caseSelector" class="form-control" required onchange="displaySelectedPatient(this.value)">
+                  <option value="">-- No Active Studies In Queue --</option>
+                </select>
+              </div>
+
+              <!-- Admin Patient & Raw Graph Review Box -->
+              <div id="patientDetailsPreview" style="display: none; background: var(--bg-card); border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 12px;">
+                <div id="previewMeta" style="margin-bottom: 8px; line-height: 1.5;"></div>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 5px 10px;" onclick="viewSelectedPatientGraph()">🔍 View Patient's Graph / Test File</button>
+                  <button type="button" class="btn btn-warning" style="font-size: 11px; padding: 5px 10px;" onclick="openEditModalFromAdmin()">✏️ Edit Patient Details</button>
+                </div>
+              </div>
+
+              <!-- Doctor Assignment Card -->
+              <div style="background: rgba(2, 132, 199, 0.08); border: 1px dashed var(--primary); padding: 10px; border-radius: 8px; margin-bottom: 14px; font-size: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong style="color: var(--primary);">Attached Specialist Signature:</strong>
+                  <button type="button" class="btn btn-outline" style="font-size: 10px; padding: 2px 6px;" onclick="openDoctorConfigModal()">Change</button>
+                </div>
+                <div id="assignedDoctorText" style="margin-top: 4px; color: var(--text-muted);">Dr. S. K. Mukherjee | MD (Medicine), DM (Neuro) | Reg: WBMC-48291</div>
+              </div>
+
+              <div class="form-group">
+                <label>Assigned Tariff Rate (₹) [Admin Internal]</label>
+                <input type="number" id="testPriceAdmin" class="form-control" placeholder="Tariff amount (e.g. 1500)">
+              </div>
+
+              <div class="form-group">
+                <label>Upload Final Verified PDF / Report</label>
+                <input type="file" id="reportFile" class="form-control" accept=".pdf,image/*,.doc,.docx,.txt,.rtf,.json,.xml" required>
+                <small style="color:var(--text-muted);font-size:11px;display:block;margin-top:4px">PDF, images and common document formats are supported. The original uploaded file is transmitted to the hospital.</small>
+                <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px; display: block;">
+                  * হসপিটাল সরাসরি এই আপলোড করা ফাইলটি দেখতে পাবে (কোনো বাড়তি কোম্পানির নাম থাকবে না)।
+                </small>
+              </div>
+
+              <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 6px;">Publish & Transmit Final Report</button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- Master Case Directory Table -->
+        <div class="card" id="clinicalWorklistPage">
+          <div class="card-header">
+            <span>Clinical Worklist & Final Reports</span>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="filterQueue('EEG')">Filter EEG</button>
+              <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="filterQueue('PFT')">Filter PFT</button>
+              <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="filterQueue('All')">Clear Filter</button>
+            </div>
+          </div>
+          <div class="worklist-toolbar">
+            <div class="filter-field"><label>Patient Name Search</label><input id="patientNameSearch" class="form-control" type="search" placeholder="Search patient name…" oninput="applyWorklistFilters()" autocomplete="off"></div>
+            <div class="filter-field" style="max-width:190px;"><label>Study Date</label><input id="patientDateFilter" class="form-control" type="date" onchange="applyWorklistFilters()"></div>
+            <button class="btn btn-outline" type="button" onclick="clearWorklistFilters()">Clear Search</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Case ID</th>
+                <th>Hospital Unit</th>
+                <th>Patient Details</th>
+                <th>Modality</th>
+                <th>Priority</th>
+                <th>Clinical Indication</th>
+                <th class="admin-only">Patient Graph</th>
+                <th class="admin-only">Tariff (₹)</th>
+                <th>Status</th>
+                <th>Report File</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="casesTableBody">
+              <tr id="emptyRow">
+                <td colspan="11" style="text-align: center; color: var(--text-muted); padding: 20px;">
+                  No patient studies ingested yet. Submit from the hospital intake panel to start.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ================= UNIFIED DOCTOR WORKSPACE ================= -->
+        <section id="doctorWorkspace" class="card doctor-only" style="display:none !important;margin-top:18px;">
+          <div class="card-header">
+            <span>🩺 Doctor Report Workspace</span>
+            <span style="font-size:11px;color:var(--teal);font-weight:700;">Assigned Cases • Secure Supabase</span>
+          </div>
+          <div style="display:grid;grid-template-columns:minmax(260px,1fr) 2fr;gap:14px;">
+            <div>
+              <label>Assigned Patient / Case</label>
+              <select id="doctorCaseSelector" class="form-control" onchange="doctorOpenCase(this.value)"><option value="">Loading assigned cases...</option></select>
+              <div id="doctorCaseInfo" style="margin-top:10px;padding:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;font-size:12px;line-height:1.55;"></div>
+              <button class="btn btn-outline" style="width:100%;margin-top:8px;" onclick="doctorViewRawFile()">🔍 View Graph / Raw Test</button>
+            </div>
+            <div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+                <button class="btn btn-outline" onclick="doctorAnalyze('EEG')">🧠 EEG Analysis</button>
+                <button class="btn btn-outline" onclick="doctorAnalyze('PFT')">🫁 PFT Analysis</button>
+                <button class="btn btn-outline" onclick="doctorAiDraft()">✨ AI Draft Support</button>
+              </div>
+              <label>Clinical / Graph Analysis</label>
+              <textarea id="doctorAnalysis" class="form-control" rows="4" placeholder="Enter observations and analysis..."></textarea>
+              <label style="display:block;margin-top:8px;">Report</label>
+              <textarea id="doctorReportText" class="form-control" rows="10" placeholder="Write the final medical report here..."></textarea>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+                <input type="file" id="doctorReportPdf" class="form-control" accept=".pdf,application/pdf" style="flex:1;min-width:220px;">
+                <button class="btn btn-primary" onclick="doctorSaveDraft(false)">💾 Save Draft</button>
+                <button class="btn btn-success" onclick="doctorSaveDraft(true)">✅ Finalize & Publish PDF</button>
+                <button class="btn btn-outline" onclick="doctorPrintPdf()">🖨️ Print / Save PDF</button>
+              </div>
+              <div id="doctorWorkspaceStatus" style="margin-top:8px;font-size:11px;color:var(--text-muted);"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= ADMIN BRAND CONTROL ================= -->
+        <section id="adminBrandControl" class="card admin-only" style="margin-top:18px;">
+          <div class="card-header">
+            <span>✨ AP DIAGNOSIS MEDICO Brand & Inspiration</span>
+            <span style="font-size:11px;color:var(--teal);font-weight:700;">ADMIN ONLY • SAVED TO SUPABASE</span>
+          </div>
+          <div class="adv-bill-form">
+            <div><label>Portal Brand Name</label><input id="portalBrandTitleEdit" class="form-control" placeholder="AP DIAGNOSIS MEDICO SOLUTIONS"></div>
+            <div style="grid-column:1/-1"><label>Inspirational Quote</label><textarea id="portalBrandQuoteEdit" class="form-control" rows="2" placeholder="Your quote for the clinical workspace"></textarea></div>
+          </div>
+          <div class="adv-bill-actions">
+            <button class="btn btn-success" type="button" onclick="savePortalBranding()">💾 Save Brand</button>
+            <span id="portalBrandSaveStatus" class="adv-bill-status"></span>
+          </div>
+        </section>
+
+        <!-- ================= ADMIN DOCTOR ASSIGNMENT ================= -->
+        <section id="unifiedBillingCenter" class="card admin-only" style="margin-top:18px;">
+  <div class="card-header">
+    <span>Advanced Admin Billing & Payment Center</span>
+    <span style="font-size:11px;color:var(--success);font-weight:700;">ADMIN ONLY • SUPABASE</span>
+  </div>
+
+  <div class="adv-bill-grid">
+    <div class="adv-bill-tile"><b>Monthly Hospital Invoice</b><small>EEG/PFT case-wise calculation with tax, discount and exact total.</small></div>
+    <div class="adv-bill-tile"><b>Custom Hospital Rates</b><small>Hospital-specific EEG/PFT/CT/MRI rates and monthly plans.</small></div>
+    <div class="adv-bill-tile"><b>UPI QR Payment</b><small>QR is generated from the saved UPI ID and the exact balance due.</small></div>
+    <div class="adv-bill-tile"><b>Payment Tracking</b><small>Paid / partial / unpaid, method and UTR/transaction reference.</small></div>
+  </div>
+
+  <div class="adv-bill-box">
+    <div class="adv-bill-title">Permanent Billing Company & Payment Information <span style="font-size:10px;color:var(--success);font-weight:800">SAVED IN SUPABASE</span></div>
+    <div class="adv-bill-form">
+      <div><label>Company / Billing Name</label><input id="advCompany" class="form-control" placeholder="Auto-loaded from saved billing settings" readonly></div>
+      <div><label>Legal Name</label><input id="advLegalName" class="form-control" placeholder="Not configured" readonly></div>
+      <div><label>Address</label><input id="advAddress" class="form-control" placeholder="Not configured" readonly></div>
+      <div><label>State</label><input id="advState" class="form-control" placeholder="Not configured" readonly></div>
+      <div><label>Pincode</label><input id="advPincode" class="form-control" placeholder="Not configured" readonly></div>
+      <div><label>Phone</label><input id="advPhone" class="form-control" placeholder="Not configured" readonly></div>
+      <div><label>Email</label><input id="advEmail" class="form-control" placeholder="Not configured" readonly></div>
+      <div><label>Website</label><input id="advWebsite" class="form-control" placeholder="Not configured" readonly></div>
+      <div><label>UPI ID</label><input id="advUpi" class="form-control" placeholder="Not configured" readonly></div>
+      <div><label>Invoice Prefix</label><input id="advPrefix" class="form-control" value="INV" readonly></div>
+      <div><label>Default Discount ₹</label><input id="advDiscount" type="number" min="0" step="0.01" class="form-control" value="0" readonly></div>
+      <div><label>Authorized Signatory</label><input id="advSignatory" class="form-control" readonly></div>
+      <div><label>Designation</label><input id="advDesignation" class="form-control" readonly></div>
+      <div><label>Saved Signature</label><div id="advSignatureStatus" class="form-control" style="display:flex;align-items:center;min-height:38px">Checking saved signature…</div><input id="advSignature" type="file" accept="image/png,image/jpeg,image/webp" class="form-control" disabled style="display:none"></div>
+    </div>
+    <div class="adv-bill-actions">
+      <button class="btn btn-outline" type="button" disabled>Database Auto-Sync</button>
+      <span id="advBillingStatus" class="adv-bill-status">Company billing details are loaded automatically from the saved database record.</span>
+    </div>
+    <div id="advUpiPreview" class="adv-upi-preview"></div><div style="margin-top:10px;font-size:11px;color:var(--text-muted)">Payment: UPI <b id="advPermanentPaymentUpi"></b> • Authorized: <b id="advPermanentAuthorized"></b></div>
+  </div>
+
+  <div class="adv-bill-box">
+    <div class="adv-bill-title">Custom Hospital Plan / Rate Card</div>
+    <div class="adv-bill-form">
+      <div style="grid-column:1/-1"><label>Existing Plan</label><select id="advPlanEditorSelect" class="form-control" onchange="advLoadPlanIntoEditor()"><option value="">Loading saved plans from database…</option></select></div>
+      <div><label>Plan Name</label><input id="advPlanName" class="form-control" placeholder="Hospital EEG/PFT Plan"></div>
+      <div><label>Monthly Flat ₹ (optional)</label><input id="advPlanMonthly" type="number" min="0" step="0.01" class="form-control" value="0"></div>
+      <div><label>EEG ₹</label><input id="advPlanEEG" type="number" min="0" step="0.01" class="form-control"></div>
+      <div><label>PFT ₹</label><input id="advPlanPFT" type="number" min="0" step="0.01" class="form-control"></div>
+      <div><label>CT ₹ (optional)</label><input id="advPlanCT" type="number" min="0" step="0.01" class="form-control"></div>
+      <div><label>MRI ₹ (optional)</label><input id="advPlanMRI" type="number" min="0" step="0.01" class="form-control"></div>
+      <div style="grid-column:1/-1"><label>Description</label><input id="advPlanDesc" class="form-control" placeholder="Custom hospital billing terms"></div>
+    </div>
+    <div class="adv-bill-actions">
+      <button class="btn btn-success" onclick="advUpdatePlan()">💾 Update Existing Plan</button>
+      <button class="btn btn-outline" onclick="advCreatePlan()">➕ Create New Plan</button>
+      <span id="advPlanStatus" class="adv-bill-status"></span>
+    </div>
+    <div id="advPlanList"></div>
+  </div>
+
+  <div class="adv-bill-box">
+    <div class="adv-bill-title">Assign Custom Plan to Hospital</div>
+    <div class="adv-bill-form" style="grid-template-columns:1fr 1fr;">
+      <div><label>Hospital</label><select id="advAssignHospital" class="form-control"><option value="">-- Select Hospital --</option><option value="1429ceb6-82f3-402b-a3ee-4a9e668862c5">ANIKET DAS — aniket2002</option><option value="65335efd-ec32-4ab8-96ee-4065e4a0729d">INDUS DIAGNOSTIC CENTRE AND POLYCLINIC — idcp</option></select></div>
+      <div><label>Plan</label><select id="advAssignPlan" class="form-control"></select></div>
+    </div>
+    <div id="advHospitalButtons" style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;"></div>
+    <div class="adv-bill-actions">
+      <button class="btn btn-outline" onclick="advLoadHospitals()">🔄 Reload Hospitals</button>
+      <button class="btn btn-success" onclick="advAssignPlan()">🔗 Assign Plan</button>
+      <span id="advAssignStatus" class="adv-bill-status"></span>
+    </div>
+    <div id="advHospitalDebug" style="font-size:10px;color:var(--text-muted);margin-top:4px;">Loading hospital list…</div>
+  </div>
+
+  <div class="adv-bill-box">
+    <div class="adv-bill-title">Automatic Hospital Billing • Separate Invoice Per Hospital</div>
+    <div class="adv-bill-form">
+      <div><label>Billing Month</label><input id="advInvoiceMonth" type="month" class="form-control"></div>
+      <div><label>Discount ₹</label><input id="advInvoiceDiscount" type="number" min="0" step="0.01" class="form-control"></div>
+    </div>
+    <div class="adv-bill-actions">
+      <button class="btn btn-primary" onclick="advPreviewAllHospitalBilling()">📊 Preview All Hospitals</button>
+      <button class="btn btn-success" onclick="advCreateAllInvoices()">🧾 Create Invoices for All Hospitals</button>
+    </div>
+    <div id="advCalculation"></div>
+    <div id="advBatchBillingStatus" class="adv-bill-status" style="margin-top:8px"></div>
+  </div>
+
+  <div class="adv-bill-box">
+    <div class="adv-bill-title">Payment Collection</div>
+    <div class="adv-bill-form">
+      <div><label>Invoice</label><select id="advPaymentInvoice" class="form-control"></select></div>
+      <div><label>Status</label><select id="advPaymentStatus" class="form-control"><option value="unpaid">Unpaid</option><option value="partial">Partially Paid</option><option value="paid">Paid</option></select></div>
+      <div><label>Received Amount ₹</label><input id="advPaymentAmount" type="number" min="0" step="0.01" class="form-control"></div>
+      <div><label>Method</label><select id="advPaymentMethod" class="form-control"><option>UPI</option><option>Bank Transfer</option><option>Cash</option><option>Other</option></select></div>
+      <div><label>UTR / Transaction Reference</label><input id="advPaymentTxn" class="form-control"></div>
+      <div><label>Payment Date</label><input id="advPaymentDate" type="date" class="form-control"></div>
+    </div>
+    <div class="adv-bill-actions"><button class="btn btn-success" onclick="advUpdatePayment()">✅ Update Payment</button><span id="advPaymentStatusText" class="adv-bill-status"></span></div>
+  </div>
+
+
+</section>
+
+<section id="savedInvoicesSection" class="card admin-only" style="margin-top:18px;">
+  <div class="card-header">
+    <span>Saved Invoices</span>
+    <span style="font-size:11px;color:var(--success);font-weight:700;">ADMIN ONLY • SUPABASE</span>
+  </div>
+  <div class="adv-bill-box">
+    <div class="adv-bill-title">Saved Invoices</div>
+    <div style="overflow:auto;">
+      <table class="data-table">
+        <thead><tr><th>Invoice</th><th>Hospital</th><th>Period</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><th></th></tr></thead>
+        <tbody id="advInvoiceBody"><tr><td colspan="8" style="text-align:center;padding:14px;color:var(--text-muted)">No invoices loaded.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="hospitalBillingPortal" class="card hospital-only" style="margin-top:18px;">
+<div class="card-header"><span>🧾 My Monthly Bills</span><span style="font-size:11px;color:var(--teal);font-weight:700;">HOSPITAL ONLY • SECURE</span></div>
+<div class="adv-bill-box"><div class="adv-bill-title">Monthly Bill History</div>
+<div class="adv-bill-form" style="grid-template-columns:1fr auto;align-items:end;"><div><label>Filter Month (optional)</label><input id="hospitalBillMonth" type="month" class="form-control"></div><button class="btn btn-outline" type="button" onclick="hospitalLoadBills()">🔄 Refresh Bills</button></div>
+<div id="hospitalBillingStatus" class="adv-bill-status" style="margin-top:6px;"></div>
+<div style="overflow:auto;margin-top:10px;"><table class="data-table"><thead><tr><th>Invoice</th><th>Month</th><th>Total</th><th>Paid</th><th>Due</th><th>Status</th><th>Options</th></tr></thead><tbody id="hospitalInvoiceBody"><tr><td colspan="7" style="text-align:center;padding:14px;color:var(--text-muted)">No bills loaded.</td></tr></tbody></table></div></div></section>
+
+<div class="modal-overlay" id="advInvoiceModal" style="display:none;align-items:center;justify-content:center;">
+  <div style="background:#fff;color:#111;width:95%;max-width:900px;max-height:92vh;overflow:auto;border-radius:10px;">
+    <div id="advInvoicePaper"></div>
+  </div>
+</div>
+
+        <!-- Monthly Hospital Billing Statement (Admin Only) -->
+        <div class="card admin-only" id="billingSection">
+          <div class="card-header">
+            <span>Hospital Monthly Invoicing & Billing Summary</span>
+            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="exportBillingPdf()">Export Billing PDF</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Hospital Unit</th>
+                <th>Cycle</th>
+                <th>Total Cases</th>
+                <th>EEG Count</th>
+                <th>PFT Count</th>
+                <th>Total Billing Amount</th>
+                <th>Payment Status</th>
+              </tr>
+            </thead>
+            <tbody id="billingTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 15px;">
+                  Ingest cases to generate monthly hospital billing calculations.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= EDIT PATIENT DETAILS MODAL ================= -->
+  <div class="modal-overlay" id="editPatientModal">
+    <div class="modal-window">
+      <div style="font-weight: 700; font-size: 16px; margin-bottom: 12px;">Edit Patient Details</div>
+      <form onsubmit="handleSavePatientEdit(event)">
+        <input type="hidden" id="editCaseId">
+        
+        <div class="form-group">
+          <label>Hospital Unit</label>
+          <input type="text" id="editOrigin" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Patient Full Name</label>
+          <input type="text" id="editName" class="form-control" required>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Age</label>
+            <input type="number" id="editAge" class="form-control" required>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>PT. Sex</label>
+            <select id="editSex" class="form-control" required>
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Modality</label>
+            <select id="editModality" class="form-control">
+              <option value="EEG">EEG</option>
+              <option value="PFT">PFT</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Priority</label>
+            <select id="editPriority" class="form-control">
+              <option value="Routine">Routine</option>
+              <option value="Urgent">Urgent</option>
+              <option value="Emergency">Emergency</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Clinical Indication & Complaint</label>
+          <textarea id="editHistory" class="form-control" rows="2" required></textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px;">
+          <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= REPORT REVIEW / REASSIGN MODAL ================= -->
+  <div class="modal-overlay" id="reportReviewModal">
+    <div class="modal-window">
+      <div style="font-weight:700;font-size:16px;margin-bottom:6px;">🔄 Report Review & Reassignment</div>
+      <div id="reviewCaseSummary" style="font-size:12px;color:var(--text-muted);margin-bottom:14px;"></div>
+      <form onsubmit="handleReportReview(event)">
+        <input type="hidden" id="reviewCaseId">
+        <div class="form-group">
+          <label>Why is the first report wrong / needs correction?</label>
+          <textarea id="reviewReason" class="form-control" rows="3" placeholder="Enter correction / review reason" required></textarea>
+        </div>
+        <div style="background:rgba(245,158,11,.08);border:1px dashed var(--warning);padding:10px;border-radius:8px;margin-bottom:14px;font-size:12px;">
+          <strong>Reassign to specialist</strong>
+          <div style="margin-top:8px;" class="form-group"><label>Doctor Full Name</label><input type="text" id="reviewDoctorName" class="form-control" required></div>
+          <div style="display:flex;gap:10px;">
+            <div class="form-group" style="flex:1;"><label>Degrees / Qualifications</label><input type="text" id="reviewDoctorDegree" class="form-control" required></div>
+            <div class="form-group" style="flex:1;"><label>Registration No.</label><input type="text" id="reviewDoctorReg" class="form-control" required></div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;">The first report will remain preserved in Report History. The new specialist will be assigned to the next report revision.</div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button type="button" class="btn btn-outline" onclick="closeReportReviewModal()">Cancel</button>
+          <button type="submit" class="btn btn-warning">Mark Wrong & Reassign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= DOCTOR DETAILS & SIGNATURE MODAL ================= -->
+  <div class="modal-overlay" id="doctorConfigModal">
+    <div class="modal-window">
+      <div style="font-weight: 700; font-size: 16px; margin-bottom: 12px;">Configure Specialist Doctor Details</div>
+      <form onsubmit="handleSaveDoctorConfig(event)">
+        <div class="form-group">
+          <label>Doctor Full Name</label>
+          <input type="text" id="docNameInput" class="form-control" placeholder="Dr. Firstname Lastname" required value="Dr. S. K. Mukherjee">
+        </div>
+
+        <div class="form-group">
+          <label>Degrees & Qualifications</label>
+          <input type="text" id="docDegreeInput" class="form-control" placeholder="e.g. MBBS, MD (Medicine), DM (Neurology)" required value="MBBS, MD, DM (Neuro)">
+        </div>
+
+        <div class="form-group">
+          <label>Medical Council Registration No.</label>
+          <input type="text" id="docRegInput" class="form-control" placeholder="e.g. WBMC-48291" required value="WBMC-48291">
+        </div>
+
+        <div class="form-group">
+          <label>Doctor Digital Signature (JPG / JPEG / PNG)</label>
+          <input type="file" id="docSignInput" class="form-control" accept="image/jpeg,image/jpg,image/png">
+          <div id="signPreviewContainer" style="margin-top: 10px; display: none; text-align: center; border: 1px dashed var(--border); padding: 8px; border-radius: 6px;">
+            <span style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Uploaded Signature:</span>
+            <img id="signPreviewImg" src="" alt="Doctor Signature" style="max-height: 50px; max-width: 100%;">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px;">
+          <button type="button" class="btn btn-outline" onclick="closeDoctorConfigModal()">Close</button>
+          <button type="submit" class="btn btn-success">Update Doctor Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Hospital Node Modal -->
+  <div class="modal-overlay" id="hospitalModal">
+    <div class="modal-window">
+      <div style="font-weight: 700; font-size: 16px; margin-bottom: 12px;">Add Hospital Access Node</div>
+      <form onsubmit="handleCreateHospital(event)">
+        <div class="form-group">
+          <label>Hospital Name</label>
+          <input type="text" id="hospName" class="form-control" placeholder="Hospital Unit Name" required>
+        </div>
+        <div class="form-group">
+          <label>Login ID</label>
+          <input type="text" id="hospId" class="form-control" placeholder="Desired Login ID" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="hospPass" class="form-control" placeholder="Access Password" required>
+        </div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px;">
+          <button type="button" class="btn btn-outline" onclick="closeHospitalModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Register Node</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+  <script>
+// Safe billing state bootstrap: prevents undefined-state errors during early clicks.
+window.__AP_BILLING_SETTINGS__ = window.__AP_BILLING_SETTINGS__ || {};
+
+    /*
+      SUPABASE CONFIGURATION
+      1) Create a Supabase project.
+      2) Put your Project URL and PUBLISHABLE key below.
+      3) Never put the secret/service-role key in this HTML.
+    */
+    const SUPABASE_URL = 'https://mojprkkzpavtjrxquxzk.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_VWg8P4xtROUzM6UzBS_7aQ_3-nVf0_y';
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY,
+      { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
+    );
+
+    let registeredCases = [];
+    let registeredHospitals = [];
+const ALLOWED_HOSPITALS = Object.freeze([
+      { id:'1429ceb6-82f3-402a-b3ee-4a9e668862c5', name:'ANIKET DAS', login_id:'aniket2002' },
+      { id:'65335efd-ec32-4ab8-96ee-4065e4a0729d', name:'INDUS DIAGNOSTIC CENTRE AND POLYCLINIC', login_id:'idcp' }
+    ]);
+    const ALLOWED_HOSPITAL_IDS = new Set(ALLOWED_HOSPITALS.map(h => h.id));
+    function isAllowedHospital(h){ return !!h && ALLOWED_HOSPITAL_IDS.has(String(h.id)); }
+    function filterAllowedHospitals(list){ return (Array.isArray(list)?list:[]).filter(isAllowedHospital); }
+    let currentRole = 'admin';
+    let currentProfile = null;
+    let pendingProfileAvatarFile = null;
+    let currentProfileAvatarPath = '';
+    let removeProfileAvatarRequested = false;
+    let profileAvatarObjectUrl = '';
+    let selectedActiveGraphPath = '';
+    let selectedActiveGraphUrl = '';
+
+    let doctorProfile = {
+      name: "Dr. S. K. Mukherjee",
+      degree: "MBBS, MD, DM (Neuro)",
+      regNo: "WBMC-48291",
+      signaturePath: ""
+    };
+
+    const relayChannel = ('BroadcastChannel' in window)
+      ? new BroadcastChannel('clinical_tele_data_relay')
+      : null;
+
+    if (relayChannel) {
+      relayChannel.onmessage = async (event) => {
+        if (event.data && ['AUTO_PATIENT_INGESTION','REPORT_PUBLISHED','PATIENT_UPDATED','REPORT_REVIEW_REQUESTED'].includes(event.data.type)) {
+          await loadCases();
+        }
+      };
+    }
+
+    function dbConfigured() {
+      return SUPABASE_URL && !SUPABASE_URL.includes('YOUR_SUPABASE_') &&
+             SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes('YOUR_SUPABASE_');
+    }
+
+    function showSetupError() {
+      alert('Supabase is not configured yet. Open this HTML file and enter your Supabase Project URL and Publishable key near the top of the script.');
+    }
+
+    async function requireSupabase() {
+      if (!dbConfigured()) {
+        showSetupError();
+        return false;
+      }
+      return true;
+    }
+
+    function safeFileName(name) {
+      return String(name || 'file').replace(/[^a-zA-Z0-9._-]/g, '_');
+    }
+
+    function caseId() {
+      return 'AP-' + Date.now().toString(36).slice(-6).toUpperCase() + '-' +
+        Math.floor(100 + Math.random() * 900);
+    }
+
+    async function getSignedUrl(path) {
+      if (!path) return '';
+      const { data, error } = await supabaseClient.storage
+        .from('clinical-files')
+        .createSignedUrl(path, 300);
+      if (error) {
+        console.error(error);
+        return '';
+      }
+      return data.signedUrl;
+    }
+
+    async function uploadClinicalFile(file, folder) {
+      if (!file) return null;
+      if (!(file instanceof File)) throw new Error('Invalid file selected.');
+      if (!file.size) throw new Error('The selected file is empty.');
+      // The current Supabase project is on the Free plan; Supabase enforces a 50 MB global file limit there.
+      // Give a clear client-side error instead of a vague Storage failure.
+      const maxBytes = 50 * 1024 * 1024;
+      if (file.size > maxBytes) throw new Error('File is larger than 50 MB. Please compress it or use a smaller file.');
+      const path = `${String(folder || 'uploads').replace(/\\/g,'/').replace(/^\/+|\/+$/g,'')}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${safeFileName(file.name)}`;
+      const { error } = await supabaseClient.storage
+        .from('clinical-files')
+        .upload(path, file, {
+          contentType: file.type || 'application/octet-stream',
+          cacheControl: '3600',
+          upsert: false
+        });
+      if (error) throw error;
+      return path;
+    }
+
+    async function refreshSessionIdentity() {
+      const badge = document.getElementById('currentSessionIdentityText');
+      if (!badge) return;
+      try {
+        const { data: authData } = await supabaseClient.auth.getUser();
+        const user = authData?.user;
+        if (!user) { badge.textContent = 'AP DIAGNOSIS MEDICO'; return; }
+
+        const profile = currentProfile || {};
+        const role = String(profile.role || currentRole || '').toLowerCase();
+        const meta = user.user_metadata || {};
+        let name = '';
+
+        if (role === 'hospital' || profile.hospital_id) {
+          const hospitalId = profile.hospital_id || meta.hospital_id;
+          if (hospitalId) {
+            let hospital = (Array.isArray(registeredHospitals) ? registeredHospitals : [])
+              .find(h => String(h.id) === String(hospitalId));
+            if (!hospital) {
+              const { data } = await supabaseClient.from('hospitals')
+                .select('id,name,display_name')
+                .eq('id', hospitalId).maybeSingle();
+              hospital = data || null;
+            }
+            name = hospital?.display_name || hospital?.name || profile.display_name || meta.display_name || '';
+          }
+        }
+
+        if (!name) {
+          name = meta.profile_name || meta.display_name || profile.display_name || profile.full_name ||
+            meta.full_name || meta.name || meta.hospital_name || '';
+        }
+        if (!name && user.email) name = user.email.split('@')[0].replace(/[._-]+/g, ' ').trim();
+        badge.textContent = name ? `Signed in: ${name}` : 'AP DIAGNOSIS MEDICO';
+        const wrapper = document.getElementById('currentSessionIdentity');
+        if (wrapper) wrapper.setAttribute('aria-label', name ? `Signed in as ${name}` : 'AP DIAGNOSIS MEDICO');
+      } catch (e) {
+        console.warn('Session identity display failed:', e);
+        badge.textContent = currentProfile?.display_name || 'AP DIAGNOSIS MEDICO';
+      }
+    }
+
+    async function loadCurrentProfile() {
+      // Robust profile loading: use a narrowly scoped SECURITY DEFINER RPC first,
+      // then fall back to the normal RLS-protected profiles query.  The JSON RPC
+      // avoids array/object response-shape differences between PostgREST versions.
+      const { data: authData, error: userError } = await supabaseClient.auth.getUser();
+      const user = authData?.user;
+      if (userError || !user) {
+        console.error('Auth user lookup failed:', userError);
+        alert('Login session could not be verified. Please sign in again.');
+        return null;
+      }
+
+      // Preferred, current profile endpoint.
+      const { data: jsonProfile, error: jsonError } = await supabaseClient
+        .rpc('get_my_profile_json');
+
+      if (!jsonError && jsonProfile && typeof jsonProfile === 'object') {
+        const data = jsonProfile;
+        if (data.id && data.role) {
+          currentProfile = data;
+          currentRole = data.role;
+          setTimeout(refreshSessionIdentity, 0);
+          return data;
+        }
+      }
+
+      // Compatibility with installations that still have the earlier RPC.
+      const { data: rpcRows, error: rpcError } = await supabaseClient
+        .rpc('get_my_profile');
+
+      if (!rpcError) {
+        const data = Array.isArray(rpcRows) ? rpcRows[0] : rpcRows;
+        if (data && data.id && data.role) {
+          currentProfile = data;
+          currentRole = data.role;
+          setTimeout(refreshSessionIdentity, 0);
+          return data;
+        }
+      }
+
+      // Final fallback: normal RLS-protected profile lookup.
+      const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('id, role, hospital_id, display_name')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (!error && data) {
+        currentProfile = data;
+        currentRole = data.role;
+        setTimeout(refreshSessionIdentity, 0);
+        return data;
+      }
+
+      console.error('Profile lookup failed:', {
+        userId: user.id,
+        jsonError,
+        rpcError,
+        profileError: error
+      });
+
+      // Doctor accounts live in doctor_users rather than profiles.
+      const { data: doctor, error: doctorError } = await supabaseClient
+        .from('doctor_users')
+        .select('id,name,degree,reg_no,specialty,signature_path,active')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (!doctorError && doctor && doctor.active !== false) {
+        currentProfile = {
+          id: doctor.id, role: 'doctor', display_name: doctor.name,
+          doctor_name: doctor.name, doctor_degree: doctor.degree || '',
+          doctor_reg_no: doctor.reg_no || '', specialty: doctor.specialty || '',
+          signature_path: doctor.signature_path || ''
+        };
+        currentRole = 'doctor';
+        setTimeout(refreshSessionIdentity, 0);
+        return currentProfile;
+      }
+
+      // Keep the message useful without exposing secrets.
+      const backendMessage = jsonError?.message || rpcError?.message || error?.message || 'Unknown profile error';
+      alert('Login succeeded, but the hospital profile could not be loaded.\n\nBackend: ' + backendMessage + '\n\nThe account must be linked to public.profiles.');
+      return null;
+    }
+
+    async function loadCases() {
+      if (!dbConfigured()) return;
+
+      let query = supabaseClient
+        .from('cases')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      // RLS is the security boundary.
